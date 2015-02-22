@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="btn_bg_startColor">#ffa9a9a9</color>
+    <color name="btn_bg_centerColor">#ffd7d7d7</color>
+    <color name="btn_bg_endColor">#ff797979</color>
+</resources>
