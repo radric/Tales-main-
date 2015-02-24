@@ -1,7 +1,5 @@
 package ua.andriyantonov.tales.fragments;
 
-import ua.andriyantonov.tales.fragments.TaleActivity_Audio;
-
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -32,22 +30,50 @@ public class TaleType_1 extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Bundle bundle = new Bundle();
                 Fragment fragment = new TaleActivity_Audio();
-                int ft;
                 switch (position){
                     case 0:
-                        bundle.putInt("possition",position);
-                        Log.d("","setArguments = "+position);
-                        fragment.setArguments(bundle);
-                        ft = getFragmentManager().beginTransaction()
-                                .replace(R.id.container, fragment)
-                                .addToBackStack(null)
-                                .commit();
+                        bundle.putInt("talePosition", position);
+                        break;
+                    case 1:
+                        bundle.putInt("talePosition", position);
+                        break;
+                    case 2:
+                        bundle.putInt("talePosition", position);
+                        break;
+                    case 3:
+                        bundle.putInt("talePosition", position);
+                        break;
+                    case 4:
+                        bundle.putInt("talePosition", position);
+                        break;
+                    case 5:
+                        bundle.putInt("talePosition", position);
+                        break;
+                    case 6:
+                        bundle.putInt("talePosition", position);
+                        break;
+                    case 7:
+                        bundle.putInt("talePosition", position);
+                        break;
                 }
+                fragment.setArguments(bundle);
+                Log.d("", "position " + position);
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container, fragment)
+                        .addToBackStack(null)
+                        .commit();
+
+
+
             }
         });
 
 
 
+
+
         return rootView;
     }
+
+
 }
