@@ -1,9 +1,11 @@
 package ua.andriyantonov.tales;
 
+import ua.andriyantonov.tales.fragments.TaleActivity_Audio;
 import ua.andriyantonov.tales.fragments.TaleType_1;
 import ua.andriyantonov.tales.fragments.TaleType_2;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -39,12 +41,12 @@ public class MainActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Parse.enableLocalDatastore(this);
-        Parse.initialize(this, "m26olelTN5T6tQwyhv2wnIoedrw2PjxJdzTAqNxr", "xTWCMY3O6RwDRK2dJI1LF6tXcUknNPhTBxXMIu3H");
-
-        ParseObject testObject = new ParseObject("TestObject");
-        testObject.put("foo", "bar");
-        testObject.saveInBackground();
+//        Parse.enableLocalDatastore(this);
+//        Parse.initialize(this, "m26olelTN5T6tQwyhv2wnIoedrw2PjxJdzTAqNxr", "xTWCMY3O6RwDRK2dJI1LF6tXcUknNPhTBxXMIu3H");
+//
+//        ParseObject testObject = new ParseObject("TestObject");
+//        testObject.put("foo", "bar");
+//        testObject.saveInBackground();
 
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -55,6 +57,22 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        Intent intent = getIntent();
+        try{
+            String action = intent.getAction().toUpperCase();
+            if (action!=null){
+                if (action.equalsIgnoreCase(getResources().getString(R.string.tickerText))){
+                    Fragment fragment = new TaleActivity_Audio();
+                       FragmentManager fragmentManager = getSupportFragmentManager();
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.container, fragment)
+                                .commit();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -166,5 +184,7 @@ public class MainActivity extends ActionBarActivity
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }
+
+
 
 }

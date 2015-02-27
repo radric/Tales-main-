@@ -1,6 +1,5 @@
 package ua.andriyantonov.tales.fragments;
 
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -72,8 +71,7 @@ public class TaleType_1 extends Fragment {
 
 
 
+
         return rootView;
     }
-
-
 }

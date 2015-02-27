@@ -1,18 +1,11 @@
 package ua.andriyantonov.tales;
-
-import android.app.Activity;
-import android.content.Context;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 
-import java.io.IOException;
+public class LoadTale {
 
-public class TalesPlayer_Service {
+    public static String data_HTTP;
 
-    private static String data_HTTP;
-    private static MediaPlayer mediaPlayer =null;
-
-    public static void loadAudioTale(int talePosition){
+    public static void getAudioTaleHTTP(int talePosition){
         switch (talePosition){
             case 0:
                 data_HTTP="http://tales.parseapp.com/audioTales/audioTale_1.mp3";
@@ -37,25 +30,4 @@ public class TalesPlayer_Service {
                 break;
         }
     }
-
-    public static void AudioTalesPlayer (Activity activity, int position){
-        loadAudioTale(position);
-
-        try {
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDataSource(data_HTTP);
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mp.start();
-                }
-            });
-            mediaPlayer.prepareAsync();
-        }catch (IOException e){
-            e.printStackTrace();
-
-        }
-    }
-
 }

@@ -31,27 +31,45 @@
 
     // audio player
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
-        <ImageButton
-            android:layout_width="wrap_content"
+        android:orientation="vertical">
+        <SeekBar
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/btn_bg"
-            android:src="@drawable/select_btn_play"
-            android:id="@+id/btn_pl_Play"
-            android:onClick="onClickStart"
-            android:layout_margin="5dp"/>
-        <ImageButton
-            android:layout_width="wrap_content"
+            android:id="@+id/audioTaleSeekBar"
+            android:layout_weight="1"  />
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btn_pl_Stop"
-            android:onClick="onClickStart"
-            android:src="@drawable/select_btn_stop"
-            android:layout_margin="5dp"
-            android:background="@drawable/btn_bg"
-            android:layout_toRightOf="@+id/btn_pl_PlayResume"/>
-    </LinearLayout>
+            android:orientation="horizontal"
+            android:gravity="center" >
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_bg"
+                android:src="@drawable/select_btn_play_and_pause"
+                android:id="@+id/btn_PlayResume"
+                android:layout_margin="5dp"
+                android:textOn=""
+                android:textOff=""/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_Stop"
+                android:src="@drawable/select_btn_stop"
+                android:layout_margin="5dp"
+                android:background="@drawable/btn_bg"
+                android:layout_toRightOf="@+id/btn_PlayResume"/>
+            <TextView
+                android:id="@+id/audioTaleDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="00:00"
+                android:layout_toRightOf="@+id/btn_Stop"/>
+            </LinearLayout>
+            </LinearLayout>
 </RelativeLayout>
