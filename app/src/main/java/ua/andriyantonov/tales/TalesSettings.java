@@ -29,6 +29,7 @@ public class TalesSettings extends Activity{
     private static byte[] buffer;
     private static SharedPreferences shp;
     private static int talePosition,mListItemPosition;
+    public static String[] fileList;
 
     public static void loadTaleItemPosition(Context context){
         shp = context.getSharedPreferences("MySHP", Context.MODE_PRIVATE);
@@ -74,8 +75,31 @@ public class TalesSettings extends Activity{
         editor.apply();
     }
 
-    public static void loadTalesListView(Context context, View view,ListView listView){
+    public static void loadStringListView(Context context){
+        loadTaleItemPosition(context);
+        assetM = context.getAssets();
+        try {
+            fileList = assetM.list("TaleType_"+mListItemPosition+"/names");
+            if (fileList==null){
+                // if dir empty
+            } else {
+                for (int i=0; i<fileList.length; i++){
+                    try {
+                        BufferedReader br = new BufferedReader(new InputStreamReader(context.getAssets()
+                                .open("TaleType_"+mListItemPosition+"/names/"+fileList[i])));
+                        String line;
+                        while ((line=br.readLine())!=null){
+                            taleName = line;
+                            fileList[i] =taleName;
+                        }
+                    } catch (IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
-
 
 }

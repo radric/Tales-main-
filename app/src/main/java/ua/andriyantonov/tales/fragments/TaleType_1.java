@@ -1,5 +1,6 @@
 package ua.andriyantonov.tales.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,12 +25,15 @@ public class TaleType_1 extends Fragment implements AdapterView.OnItemClickListe
         final View rootView = inflater.inflate(R.layout.frg_taletype_1,container,false);
 
         serviceIntent = new Intent(getActivity(),TalePlay_Service.class);
+        TalesSettings.loadStringListView(getActivity());
+        String [] fileList = TalesSettings.fileList;
 
         ListView listView = (ListView) rootView.findViewById(R.id.taleType_1_listView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 getActivity().getApplicationContext(),
                 R.layout.listitem_names,
-                getResources().getStringArray(R.array.TaleType_1_array));
+                fileList
+        );
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(this);

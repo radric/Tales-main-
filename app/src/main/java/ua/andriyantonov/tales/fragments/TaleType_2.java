@@ -18,11 +18,15 @@ public class TaleType_2 extends Fragment implements AdapterView.OnItemClickListe
     public View onCreateView(LayoutInflater inflater,ViewGroup container, Bundle saveInstanceBundle){
         final View rootView = inflater.inflate(R.layout.frg_taletype_2,container,false);
 
+        TalesSettings.loadStringListView(getActivity());
+        String [] fileList = TalesSettings.fileList;
+
         ListView listView = (ListView)rootView.findViewById(R.id.taleType_2_listView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 getActivity().getApplicationContext(),
                 R.layout.listitem_names,
-                getActivity().getResources().getStringArray(R.array.TaleType_2_array));
+                fileList
+        );
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(this);
@@ -33,7 +37,6 @@ public class TaleType_2 extends Fragment implements AdapterView.OnItemClickListe
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Fragment fragment = new TaleActivity_Read();
         String backStackName = fragment.getClass().getName();
-        Log.d("111",backStackName);
         TalesSettings.saveTaleItemPosition(getActivity(), "talePosition", position);
         getFragmentManager().beginTransaction()
                 .replace(R.id.container, fragment)
