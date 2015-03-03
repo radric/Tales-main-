@@ -8,7 +8,7 @@
 
     <TextView android:id="@+id/section_label1"
         android:layout_width="wrap_content"
-        android:text="@string/title_section2"
+        android:text="на стадії проектування. . . ."
         android:layout_height="wrap_content" />
 
 </RelativeLayout>

@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="btn_bg_startColor">#ffa9a9a9</color>
-    <color name="btn_bg_centerColor">#ffa9a9a9</color>
-    <color name="btn_bg_endColor">#ff878787</color>
+    <color name="btn_bg_startColor">#ffcdcdcd</color>
+    <color name="btn_bg_centerColor">#ffd2d2d2</color>
+    <color name="btn_bg_endColor">#ffc4c4c4</color>
+
+    <color name="player_bg_startColor">#ff121212</color>
+
+    <color name="btnNameTextColor">#FF262626</color>
+
+    <color name="taleNameTextColor">#ff262626</color>
+    <color name="taleNameShadowColor">#ff606060</color>
+
+    <color name="taleTextColor">#ff3b3b3b</color>
 </resources>

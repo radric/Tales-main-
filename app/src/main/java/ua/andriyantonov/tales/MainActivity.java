@@ -1,5 +1,6 @@
 package ua.andriyantonov.tales;
 
+import ua.andriyantonov.tales.fragments.NavigationDrawerFragment;
 import ua.andriyantonov.tales.fragments.TaleActivity_Audio;
 import ua.andriyantonov.tales.fragments.TaleType_1;
 import ua.andriyantonov.tales.fragments.TaleType_2;
@@ -18,14 +19,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.ImageButton;
-
-import com.parse.Parse;
-import com.parse.ParseObject;
-
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+    private String[] mainItemList;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -48,30 +45,32 @@ public class MainActivity extends ActionBarActivity
 //        testObject.put("foo", "bar");
 //        testObject.saveInBackground();
 
+        mainItemList = getResources().getStringArray(R.array.mainListItem);
+            onNewIntent(getIntent());
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
-
-        // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
-
-        Intent intent = getIntent();
-        try{
-            String action = intent.getAction().toUpperCase();
-            if (action!=null){
-                if (action.equalsIgnoreCase(getResources().getString(R.string.tickerText))){
-                    Fragment fragment = new TaleActivity_Audio();
-                       FragmentManager fragmentManager = getSupportFragmentManager();
-                        fragmentManager.beginTransaction()
-                                .replace(R.id.container, fragment)
-                                .commit();
-                }
+    }
+    @Override
+    public void onNewIntent(Intent intent){
+        Bundle extras = intent.getExtras();
+        if (extras!=null){
+            boolean reloadFragmentFromNotification = extras .getBoolean("showAudioFrag", false);
+            if (reloadFragmentFromNotification){
+                Fragment fragment = new TaleActivity_Audio();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container,fragment)
+                        .addToBackStack(null)
+                        .commit();
             }
-        }catch (Exception e){
-            e.printStackTrace();
+        }else {
+            mNavigationDrawerFragment = (NavigationDrawerFragment)
+                    getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+            mTitle = getTitle();
+
+            // Set up the drawer.
+            mNavigationDrawerFragment.setUp(
+                    R.id.navigation_drawer,
+                    (DrawerLayout) findViewById(R.id.drawer_layout));
         }
     }
 
@@ -81,6 +80,7 @@ public class MainActivity extends ActionBarActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                .addToBackStack(null)
                 .commit();
     }
 
@@ -90,23 +90,28 @@ public class MainActivity extends ActionBarActivity
             case 1:
                 Log.d("","111111");
                 fragment = new TaleType_1();
-                mTitle = getString(R.string.title_section1);
                 break;
             case 2:
                 Log.d("","222222");
                 fragment = new TaleType_2();
-                mTitle = getString(R.string.title_section2);
                 break;
             case 3:
-                mTitle = getString(R.string.title_section3);
                 break;
         }
+        setTitle(mainItemList[number-1]);
+        LoadTale.saveTaleItemPosition(getApplication(),"mListItemPosition",number);
         if(fragment!=null){
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container,fragment)
                     .commit();
         }
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        mTitle = title;
+        getSupportActionBar().setTitle(mTitle);
     }
 
     public void restoreActionBar() {
@@ -184,7 +189,6 @@ public class MainActivity extends ActionBarActivity
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }
-
 
 
 }

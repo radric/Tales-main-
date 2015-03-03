@@ -1,5 +1,6 @@
 package ua.andriyantonov.tales.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,12 +11,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import ua.andriyantonov.tales.LoadTale;
 import ua.andriyantonov.tales.R;
+import ua.andriyantonov.tales.TalePlay_Service;
 
-public class TaleType_1 extends Fragment {
+public class TaleType_1 extends Fragment implements AdapterView.OnItemClickListener {
+    private Intent serviceIntent;
 
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle saveInstanceBundle){
         final View rootView = inflater.inflate(R.layout.frg_taletype_1,container,false);
+
+        serviceIntent = new Intent(getActivity(),TalePlay_Service.class);
 
         ListView listView = (ListView) rootView.findViewById(R.id.taleType_1_listView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
@@ -24,54 +30,31 @@ public class TaleType_1 extends Fragment {
                 getResources().getStringArray(R.array.TaleType_1_array));
         listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Bundle bundle = new Bundle();
-                Fragment fragment = new TaleActivity_Audio();
-                switch (position){
-                    case 0:
-                        bundle.putInt("talePosition", position);
-                        break;
-                    case 1:
-                        bundle.putInt("talePosition", position);
-                        break;
-                    case 2:
-                        bundle.putInt("talePosition", position);
-                        break;
-                    case 3:
-                        bundle.putInt("talePosition", position);
-                        break;
-                    case 4:
-                        bundle.putInt("talePosition", position);
-                        break;
-                    case 5:
-                        bundle.putInt("talePosition", position);
-                        break;
-                    case 6:
-                        bundle.putInt("talePosition", position);
-                        break;
-                    case 7:
-                        bundle.putInt("talePosition", position);
-                        break;
-                }
-                fragment.setArguments(bundle);
-                Log.d("", "position " + position);
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.container, fragment)
-                        .addToBackStack(null)
-                        .commit();
-
-
-
-            }
-        });
-
-
-
-
-
+        listView.setOnItemClickListener(this);
 
         return rootView;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        LoadTale.loadTaleItemPosition(getActivity());
+   //     if(position!=talePosition){
+            stopTalePlay_Service();
+            Fragment fragment = new TaleActivity_Audio();
+            LoadTale.saveTaleItemPosition(getActivity(),"talePosition", position);
+            Log.d("", "position " + position);
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.container, fragment)
+                    .addToBackStack(null)
+                    .commit();
+      //      }
+    }
+
+    private void stopTalePlay_Service(){
+        try {
+            getActivity().stopService(serviceIntent);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

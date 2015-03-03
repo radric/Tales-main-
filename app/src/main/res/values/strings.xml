@@ -11,11 +11,15 @@
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
 
-    <string name="tickerText">Tutorial music in bg</string>
-    <string name="contentTitle">music in service app</string>
-    <string name="contentText">bla bla bla</string>
+    <string name="tickerText">Казка почалась</string>
+    <string name="contentTitle">Аудіо казка</string>
 
-    <string name="pdBuffer_inProgress">Завантажується...</string>
-    <string name="pdBuffer_inBuffer">Це може зайняти кілька секунд</string>
+    <string name="pdBuffer_inProgress">Аудіо завантажується</string>
+    <string name="pdBuffer_inBuffer">Це може зайняти кілька секунд ...</string>
+
+    <string name="ad_afterCall_message">Програвач було зупинено</string>
+    <string name="ad_afterCall_btnPos">Продовжити</string>
+    <string name="ad_afterCall_btnNeg">Пауза</string>
+
 
 </resources>

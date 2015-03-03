@@ -1,29 +1,36 @@
 package ua.andriyantonov.tales;
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
 import ua.andriyantonov.tales.fragments.TaleActivity_Audio;
 
 public class TalePlay_Service extends Service implements MediaPlayer.OnPreparedListener,
         MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnCompletionListener,
 MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
 
-    private MediaPlayer mPlayer = new MediaPlayer();
-    private String sntTaleAudioLink;
+    public MediaPlayer mPlayer = new MediaPlayer();
+    private int switchInt;
 
     private final static int NOTIFICATION_ID=1;
     private boolean isPausedInCall;
@@ -34,13 +41,11 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
     private Intent bufferIntent;
     //------Variables for seekbar progress
     public int taleAudioPosition;
-    public int taleAudioMaxPosition;
+    public int taleAudioMaxDuration;
     private final Handler handler = new Handler();
     private static int audioTaleEnded;
     public final static String BROADCAST_ACTION = "ua.andriyantonov.tales.action";
     private Intent seekIntent;
-    private int playStatusInt=0;
-
 
 
     @Override
@@ -59,75 +64,65 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
 
     @Override
     public int onStartCommand(Intent intent,int flags,int startId){
-                Log.d("","playstatus = " +playStatusInt );
-                /**set up receiver for seekBar change*/
-                getApplication().registerReceiver(seekBarChangedBroadcastReceiver, new IntentFilter(TaleActivity_Audio.BROADCAST_SEEKBAR));
+        /**set up receiver for seekBar change and PlayResume btns*/
+        getApplication().registerReceiver(seekBarChangedBroadcastReceiver, new IntentFilter(TaleActivity_Audio.BROADCAST_SEEKBAR));
+        LocalBroadcastManager.getInstance(getApplication()).registerReceiver(switchPlayPauseBroadcastReceiver,new IntentFilter(TaleActivity_Audio.BROADCAST_switchStatus));
 
-                /** Manage incomingphone calls during playback
-                 *     public static final String BROADCAST_BUFFER = "ua.andriyantonov.tales.broadcastbuffer";
-                 e mp on incoming
-                 * Resume on hangup  */
-                telephonyManager = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
-                phoneStateListener = new PhoneStateListener(){
+        initNotification();
+
+        /** Manage incomingphone calls during playback
+        *     public static final String BROADCAST_BUFFER = "ua.andriyantonov.tales.broadcastbuffer";
+        e mp on incoming
+        * Resume on hangup  */
+        telephonyManager = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
+
+        /** register the listener with telephony manager */
+
+
+        phoneStateListener = new PhoneStateListener(){
                     @Override
                     public void onCallStateChanged(int state,String incomingNumber){
-                        switch (state){
-                            case TelephonyManager.CALL_STATE_OFFHOOK:
-                                break;
-                            case TelephonyManager.CALL_STATE_RINGING:
-                                if (mPlayer!=null){
-                                    pauseTaleAudio();
-                                    isPausedInCall=true;
-                                }
-                                break;
-                            case TelephonyManager.CALL_STATE_IDLE:
-
-                                /** need to make alertDialog and ask "do you want to resume?"  */
-                                if (mPlayer!=null){
-                                    if (isPausedInCall){
-                                        isPausedInCall=false;
-                                        playTaleAudio();
-                                    }
-                                }
-                                break;
+            switch (state){
+                case  TelephonyManager.CALL_STATE_OFFHOOK:
+                break;
+                case TelephonyManager.CALL_STATE_RINGING:
+                    if (mPlayer!=null){
+                    pauseTaleAudio();
+                    isPausedInCall=true;
+                    }
+                    break;
+                    case TelephonyManager.CALL_STATE_IDLE:
+                        /** need to make alertDialog and ask "do you want to resume?"  */
+                        if (mPlayer!=null){
+                        if (isPausedInCall){
+                        isPausedInCall=false;
+                            pauseTaleAudio();
+                            }
                         }
-                    }
+                        break;
+            }
+            }
                 };
+        telephonyManager.listen(phoneStateListener,PhoneStateListener.LISTEN_CALL_STATE);
 
-                /** register the listener with telephony manager */
-                telephonyManager.listen(phoneStateListener,PhoneStateListener.LISTEN_CALL_STATE);
-
-
-                initNotification();
-
-                sntTaleAudioLink = intent.getExtras().getString("sentAudioLink");
-                if (!mPlayer.isPlaying()){
-                    try {
-                        mPlayer.setDataSource(sntTaleAudioLink);
-
-                        /** send message to activity to progress uploading dialog*/
-                        sendBufferingBroadcast();
-                        mPlayer.prepareAsync();
-                    }catch (IllegalArgumentException e){
-                        e.printStackTrace();
-                    }catch (IllegalStateException e){
-                        e.printStackTrace();
-                    }catch (IOException e){
-                        e.printStackTrace();
-                    }
-                }
+        if (!mPlayer.isPlaying()){
+            try {
+                LoadTale.loadTaleItemPosition(getApplicationContext());
+                mPlayer.setDataSource(LoadTale.data_HTTP);
+                /** send message to activity to progress uploading dialog*/
+                mPlayer.prepareAsync();
+            }catch (IllegalArgumentException e){
+                e.printStackTrace();
+            }catch (IllegalStateException e){
+                e.printStackTrace();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+                sendBufferingBroadcast();
                 /** set up seekbar handler*/
                 setupHandler();
-
-        return START_NOT_STICKY;
-    }
-
-
-    public void firstStart(){
-
-    }
-    public void anyCaseStart(){
-
+        return START_STICKY;
     }
 
     @Override
@@ -139,14 +134,15 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
             }
             mPlayer.release();
         }
-        cancelNotification();
+        stopSelf();
         if (phoneStateListener!=null){
             telephonyManager.listen(phoneStateListener,PhoneStateListener.LISTEN_NONE);
         }
 
         handler.removeCallbacks(sendUpdatesToUI);
-
+        cancelNotification();
         getApplication().unregisterReceiver(seekBarChangedBroadcastReceiver);
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(switchPlayPauseBroadcastReceiver);
     }
 
     @Override
@@ -182,11 +178,6 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
             mPlayer.start();
         }
     }
-    public void stopTaleAudio(){
-        if (!mPlayer.isPlaying()){
-            mPlayer.stop();
-        }
-    }
     public void pauseTaleAudio(){
         if (mPlayer.isPlaying()){
             mPlayer.pause();
@@ -205,14 +196,61 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
         }
     };
 
+    public void afterCallDialog(){
+        AlertDialog ad = new AlertDialog.Builder(getApplication()).create();
+        ad.setMessage(getResources().getString(R.string.ad_afterCall_message));
+        ad.setButton(getResources().getString(R.string.ad_afterCall_btnPos),new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                playTaleAudio();
+            }
+        });
+        ad.setButton(getResources().getString(R.string.ad_afterCall_btnNeg), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        ad.setCancelable(true);
+        ad.show();
+    }
+
     private void LogTaleAudioPosition(){
         if(mPlayer.isPlaying()){
             taleAudioPosition = mPlayer.getCurrentPosition();
-            taleAudioMaxPosition = mPlayer.getDuration();
+            taleAudioMaxDuration = mPlayer.getDuration();
             seekIntent.putExtra("counter",String.valueOf(taleAudioPosition));
-            seekIntent.putExtra("audioMax",String .valueOf(taleAudioMaxPosition));
+            seekIntent.putExtra("audioMax",String .valueOf(taleAudioMaxDuration));
             seekIntent.putExtra("song_ended",String .valueOf(audioTaleEnded));
+            String maxDurationText = convertFormat(taleAudioMaxDuration);
+            seekIntent.putExtra("audioMaxText",maxDurationText);
+
+            String currTimePosText = convertFormat(taleAudioPosition);
+            seekIntent.putExtra("currTimePosText",currTimePosText);
+
             sendBroadcast(seekIntent);
+        }
+    }
+
+    public String convertFormat(long miliSeconds){
+        long s = TimeUnit.MILLISECONDS.toSeconds(miliSeconds)%60;
+        long m = TimeUnit.MILLISECONDS.toMinutes(miliSeconds)%60;
+        return String .format("%02d:%02d",m,s);
+    }
+
+    /** receive player position (play or pause) if it has been changed by the user in fragment*/
+    private BroadcastReceiver switchPlayPauseBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switchPlayPause(intent);
+        }
+    };
+    public void switchPlayPause(Intent intent){
+        switchInt = intent.getIntExtra("switchStatus",-1);
+        if (switchInt==1){
+            pauseTaleAudio();
+        } else if (switchInt==2){
+            playTaleAudio();
         }
     }
 
@@ -246,7 +284,6 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        stopTaleAudio();
         stopSelf();
         audioTaleEnded=1;
         seekIntent.putExtra("song_ended",String .valueOf(audioTaleEnded));
@@ -274,14 +311,17 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
         CharSequence tikerText = getResources().getString(R.string.tickerText);
         NotificationManager mNotificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         Notification notification = new Notification(R.drawable.ic_launcher,tikerText,System.currentTimeMillis());
-        notification.flags = Notification.FLAG_ONGOING_EVENT;
+        notification.flags = Notification.FLAG_AUTO_CANCEL;
         Context context = getApplicationContext();
         CharSequence contentTitle = getResources().getString(R.string.contentTitle);
-        CharSequence contentText = getResources().getString(R.string.contentText);
+        CharSequence contentText = LoadTale.taleName;
         Intent notifIntent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
-        PendingIntent contentIntent = PendingIntent.getActivity(context,0,notifIntent,0);
+        notifIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        notifIntent.putExtra("showAudioFrag",true);
+        PendingIntent contentIntent = PendingIntent.getActivity(context,0,notifIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setLatestEventInfo(context,contentTitle,contentText,contentIntent);
-        mNotificationManager.notify(NOTIFICATION_ID,notification);
+        Log.d("", "" + notifIntent.getExtras());
+        mNotificationManager.notify(NOTIFICATION_ID, notification);
     }
 
     private void cancelNotification(){

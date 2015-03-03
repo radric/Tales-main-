@@ -1,75 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="10dp">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     ///text
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:id="@+id/ll_text">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/taleName"
-            android:hint="taleName"
-            android:layout_gravity="center"/>
+        android:id="@+id/ll_text"
+        android:layout_above="@+id/rl_audioPlayer">
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/taleName"
-            android:layout_marginTop="10dp">
+            android:layout_marginBottom="-10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/taleName"
+                    android:text="taleName"
+                    android:layout_gravity="center"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:layout_marginTop="5dp"
+                    style="@style/taleNameStyle"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/taleText"
-                    android:hint="taleText"/>
+                    android:text="taleText"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    style="@style/taleTextStyle"/>
+            </LinearLayout>
+
         </ScrollView>
         </LinearLayout>
 
     // audio player
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/rl_audioPlayer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical">
+        android:background="@drawable/player_bg"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="5dp">
         <SeekBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/audioTaleSeekBar"
-            android:layout_weight="1"  />
+            android:id="@+id/audioTaleSeekBar" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center" >
+            android:gravity="center"
+            android:id="@+id/ll_btn_playResume"
+            android:layout_below="@id/audioTaleSeekBar">
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/btn_bg"
                 android:src="@drawable/select_btn_play_and_pause"
                 android:id="@+id/btn_PlayResume"
-                android:layout_margin="5dp"
-                android:textOn=""
-                android:textOff=""/>
+                android:onClick="onPlayerBtnClick"
+                android:layout_marginRight="5dp"/>
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/btn_Stop"
+                android:onClick="onPlayerBtnClick"
                 android:src="@drawable/select_btn_stop"
-                android:layout_margin="5dp"
+                android:layout_marginLeft="5dp"
                 android:background="@drawable/btn_bg"
                 android:layout_toRightOf="@+id/btn_PlayResume"/>
-            <TextView
-                android:id="@+id/audioTaleDuration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="00:00"
-                android:layout_toRightOf="@+id/btn_Stop"/>
-            </LinearLayout>
-            </LinearLayout>
+
+        </LinearLayout>
+        <TextView
+            android:id="@+id/currTimePos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="13dp"
+            android:text="00:00"
+            android:textColor="#fff"
+            android:layout_below="@id/audioTaleSeekBar"
+            android:layout_alignLeft="@id/audioTaleSeekBar"
+            android:layout_alignBottom="@id/ll_btn_playResume"/>
+        <TextView
+            android:id="@+id/taleDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="13dp"
+            android:text="00:00"
+            android:textColor="#fff"
+            android:layout_below="@id/audioTaleSeekBar"
+            android:layout_alignRight="@id/audioTaleSeekBar"
+            android:layout_alignBottom="@id/ll_btn_playResume"/>
+
+        </RelativeLayout>
+
 </RelativeLayout>

@@ -10,6 +10,8 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +23,13 @@ import ua.andriyantonov.tales.LoadTale;
 import ua.andriyantonov.tales.R;
 import ua.andriyantonov.tales.TalePlay_Service;
 
-public class TaleActivity_Audio extends Fragment implements SeekBar.OnSeekBarChangeListener{
-    TextView textView;
-    Intent serviceIntent;
+public class TaleActivity_Audio extends Fragment implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
+    private TextView taleName,taleText,taleDuration,currTimePos;
+    private Intent serviceIntent,switchStatus;
     private boolean isOnline;
     private boolean mBufferBroadcastIsRegistered;
     private ProgressDialog pdBuffer = null;
-    public String data_HTTP;
-    ImageButton btn_PlayResume,btn_Stop;
+    public ImageButton btn_PlayResume,btn_Stop;
     public int isPlaying=0;
 
     //--SeekBar variables
@@ -42,69 +43,65 @@ public class TaleActivity_Audio extends Fragment implements SeekBar.OnSeekBarCha
     public static String BROADCAST_SEEKBAR = "ua.andriyantonov.tales.seekbarprogress";
     private Intent seekBarIntent;
 
+    public static String BROADCAST_switchStatus = "ua.andriyantonov.tales.switchStatus";
 
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle saveInstanceBundle){
         final View rootView = inflater.inflate(R.layout.frg_taleactivity_audio,container,false);
-        Bundle bundle = getArguments();
-        final int talePosition = bundle.getInt("talePosition");
-
         serviceIntent = new Intent(getActivity(), TalePlay_Service.class);
         seekBarIntent = new Intent(BROADCAST_SEEKBAR);
-        textView = (TextView)rootView.findViewById(R.id.taleName);
+        taleName = (TextView)rootView.findViewById(R.id.taleName);
+        taleText = (TextView)rootView.findViewById(R.id.taleText);
+        taleDuration = (TextView)rootView.findViewById(R.id.taleDuration);
+        currTimePos = (TextView)rootView.findViewById(R.id.currTimePos);
         btn_PlayResume = (ImageButton)rootView.findViewById(R.id.btn_PlayResume);
         btn_Stop = (ImageButton)rootView.findViewById(R.id.btn_Stop);
         audioTaleSeekBar = (SeekBar)rootView.findViewById(R.id.audioTaleSeekBar);
 
-        btn_PlayResume.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        LoadTale.getTaleName(getActivity());
+        LoadTale.getTaleText(getActivity());
+        taleName.setText(LoadTale.taleName);
+        taleText.setText(LoadTale.taleText);
+
+        btn_PlayResume.setOnClickListener(this);
+        btn_Stop.setOnClickListener(this);
+        audioTaleSeekBar.setOnSeekBarChangeListener(this);
+
+        return rootView;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btn_PlayResume:
                 switch (isPlaying){
                     case 0:
-                        btn_PlayResume.setImageResource(R.drawable.select_btn_pause);
+                        startTalePlay_Service();
                         isPlaying=1; //is playing
                         break;
                     case 1:
-                        btn_PlayResume.setImageResource(R.drawable.select_btn_play);
+                        switchPlayPause();
                         isPlaying=2;// on pause
                         break;
                     case 2:
-                        btn_PlayResume.setImageResource(R.drawable.select_btn_pause);
-                        isPlaying=1; //is playing
+                        switchPlayPause();
+                        isPlaying=1;// on pause
                         break;
                 }
-                startTalePlay_Service();
-            }
-        });
-
-        btn_Stop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                break;
+            case R.id.btn_Stop:
                 stopTalePlay_Service();
-                audioTaleSeekBar.setProgress(0);
                 isPlaying=0;
-            }
-        });
-
-        audioTaleSeekBar.setOnSeekBarChangeListener(this);
-
-        LoadTale.getAudioTaleHTTP(talePosition);
-        data_HTTP = LoadTale.data_HTTP;
-        return rootView;
+        }
     }
 
     private void startTalePlay_Service(){
         checkConnectivity();
         if (isOnline){
-            //stopTalePlay_Service();
-        serviceIntent.putExtra("sentAudioLink",data_HTTP);
-        try {
-            getActivity().startService(serviceIntent);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
             /** register broadcastReceiver for seekBar*/
             getActivity().registerReceiver(seekBarBroadcastReceiver,new IntentFilter(TalePlay_Service.BROADCAST_ACTION));
             mSeekBarBroadcastIsRegistered=true;
+            btn_PlayResume.setImageResource(R.drawable.select_btn_pause);
+            getActivity().startService(serviceIntent);
         }else {
             AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
             alertDialog.setTitle("Відсутній доступ до мережі...");
@@ -112,30 +109,40 @@ public class TaleActivity_Audio extends Fragment implements SeekBar.OnSeekBarCha
             alertDialog.setButton("Добре", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-
+                    isPlaying=0;
                 }
             });
             alertDialog.setIcon(R.drawable.ic_launcher);
-            btn_PlayResume.setImageResource(R.drawable.select_btn_pause);
+            btn_PlayResume.setImageResource(R.drawable.select_btn_play);
             alertDialog.show();
         }
     }
 
+    private void switchPlayPause(){
+        switchStatus = new Intent(BROADCAST_switchStatus);
+        if (isPlaying==1) {
+            switchStatus.putExtra("switchStatus", 1);
+            btn_PlayResume.setImageResource(R.drawable.select_btn_play);
+            Log.d("111", "pressed start");
+        } else if (isPlaying==2){
+            switchStatus.putExtra("switchStatus",2);
+            btn_PlayResume.setImageResource(R.drawable.select_btn_pause);
+            Log.d("1111","pressed start");
+        }
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(switchStatus);
+        Log.d("111","BR was sent");
+    }
+
     private void stopTalePlay_Service(){
-        try {
-            getActivity().stopService(serviceIntent);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        /** unregister broadcastReceiver for seekBar*/
-        if (mSeekBarBroadcastIsRegistered){
-            try {
-                getActivity().unregisterReceiver(seekBarBroadcastReceiver);
-                mSeekBarBroadcastIsRegistered = false;
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-        }
+        btn_PlayResume.setImageResource(R.drawable.select_btn_play);
+        audioTaleSeekBar.setProgress(0);
+        currTimePos.setText("00:00");
+        getActivity().stopService(serviceIntent);
+//        switchStatus = new Intent(BROADCAST_switchStatus);
+//        switchStatus.putExtra("switchStatus",2);
+//        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(switchStatus);
+
+        onPause();
     }
 
     private void checkConnectivity(){
@@ -155,17 +162,22 @@ public class TaleActivity_Audio extends Fragment implements SeekBar.OnSeekBarCha
             updateUI(serviceIntent);
         }
     };
+
     private void updateUI(Intent serviceIntent){
         String taleAudioPosition = serviceIntent.getStringExtra("counter");
         String taleAudioMaxPosition = serviceIntent.getStringExtra("audioMax");
         String song_ended = serviceIntent.getStringExtra("song_ended");
+        String audioMaxText = serviceIntent.getStringExtra("audioMaxText");
+        String currTimePosText = serviceIntent.getStringExtra("currTimePosText");
         seekProgress=Integer.parseInt(taleAudioPosition);
         seekMax = Integer.parseInt(taleAudioMaxPosition);
         audioTaleEnded = Integer.parseInt(song_ended);
         audioTaleSeekBar.setMax(seekMax);
         audioTaleSeekBar.setProgress(seekProgress);
+        taleDuration.setText(audioMaxText);
+        currTimePos.setText(currTimePosText);
         if (audioTaleEnded==1){
-            btn_PlayResume.setImageResource(R.drawable.select_btn_play);
+            stopTalePlay_Service();
         }
     }
 
@@ -173,7 +185,6 @@ public class TaleActivity_Audio extends Fragment implements SeekBar.OnSeekBarCha
     private void showPogrDialog(Intent bufferIntent){
         String bufferValue = bufferIntent.getStringExtra("buffering");
         int bufferIntValue = Integer.parseInt(bufferValue);
-
         switch (bufferIntValue){
             case 0:
                 if (pdBuffer!=null) {
@@ -211,6 +222,7 @@ public class TaleActivity_Audio extends Fragment implements SeekBar.OnSeekBarCha
 
         super.onPause();
     }
+
     @Override
     public void onResume(){
         if (!mBufferBroadcastIsRegistered){
@@ -230,12 +242,9 @@ public class TaleActivity_Audio extends Fragment implements SeekBar.OnSeekBarCha
         }
     }
     @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
+    public void onStartTrackingTouch(SeekBar seekBar) {  }
     @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
+    public void onStopTrackingTouch(SeekBar seekBar) {   }
 
-    }
 }
 
