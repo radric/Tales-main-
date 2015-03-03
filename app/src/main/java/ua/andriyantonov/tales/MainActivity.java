@@ -46,7 +46,17 @@ public class MainActivity extends ActionBarActivity
 //        testObject.saveInBackground();
 
         mainItemList = getResources().getStringArray(R.array.mainListItem);
-            onNewIntent(getIntent());
+        mNavigationDrawerFragment = (NavigationDrawerFragment)
+                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mTitle = getTitle();
+
+        // Set up the drawer.
+        mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout) findViewById(R.id.drawer_layout));
+
+
+        onNewIntent(getIntent());
 
     }
     @Override
@@ -59,7 +69,6 @@ public class MainActivity extends ActionBarActivity
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 fragmentManager.beginTransaction()
                         .replace(R.id.container,fragment)
-                        .addToBackStack(null)
                         .commit();
             }
         }else {
@@ -80,30 +89,42 @@ public class MainActivity extends ActionBarActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                .addToBackStack(null)
                 .commit();
     }
 
     public void onSectionAttached(int number) {
         Fragment fragment = null;
+//        FragmentManager fManager = getSupportFragmentManager();
+//        android.support.v4.app.FragmentTransaction ft = fManager.beginTransaction();
+//        String backStateName = null;
+//        boolean fragmentPopped = false;
         switch (number) {
             case 1:
-                Log.d("","111111");
                 fragment = new TaleType_1();
                 break;
             case 2:
-                Log.d("","222222");
                 fragment = new TaleType_2();
                 break;
             case 3:
                 break;
+            default:
+                break;
         }
         setTitle(mainItemList[number-1]);
-        LoadTale.saveTaleItemPosition(getApplication(),"mListItemPosition",number);
+        TalesSettings.saveTaleItemPosition(getApplication(), "mListItemPosition", number);
         if(fragment!=null){
+//            backStateName = fragment.getClass().getName();
+//            fragmentPopped = fManager.popBackStackImmediate(backStateName,1);
+//            if (!fragmentPopped){
+//                ft.replace(R.id.container, fragment);
+//            }
+//            ft.setTransition(android.support.v4.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//            ft.addToBackStack(backStateName);
+//            ft.commit();
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container,fragment)
+                    .setCustomAnimations(R.animator.show_fr,R.animator.remove_fr)
                     .commit();
         }
     }

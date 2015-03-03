@@ -6,6 +6,11 @@ import android.content.res.AssetManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,7 +19,7 @@ import java.io.InputStreamReader;
 
 import ua.andriyantonov.tales.fragments.TaleActivity_Audio;
 
-public class LoadTale extends Activity{
+public class TalesSettings extends Activity{
 
     public static String data_HTTP;
     public static String taleName, taleText;
@@ -28,7 +33,7 @@ public class LoadTale extends Activity{
     public static void loadTaleItemPosition(Context context){
         shp = context.getSharedPreferences("MySHP", Context.MODE_PRIVATE);
         talePosition = shp.getInt("talePosition",-1);
-        mListItemPosition = shp.getInt("mListItemPosition",0);
+        mListItemPosition = shp.getInt("mListItemPosition",-1);
         data_HTTP="http://tales.parseapp.com/audioTales/audioTale_"+talePosition+".mp3";
     }
 
@@ -68,4 +73,9 @@ public class LoadTale extends Activity{
         editor.putInt(key,value);
         editor.apply();
     }
+
+    public static void loadTalesListView(Context context, View view,ListView listView){
+    }
+
+
 }

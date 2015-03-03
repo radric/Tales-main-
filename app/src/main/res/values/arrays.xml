@@ -4,10 +4,10 @@
         <item>Аудіо Казки</item>
         <item>Казки про добро і зло</item>
         <item>Аудіо про тварин</item>
-        <item>Аудіо про любов</item>
-        <item>Аудіо про щастя</item>
-        <item>Аудіо про ще щось</item>
-        <item>Аудіо про ще щось 22</item>
+        <!--<item>Аудіо про любов</item>-->
+        <!--<item>Аудіо про щастя</item>-->
+        <!--<item>Аудіо про ще щось</item>-->
+        <!--<item>Аудіо про ще щось 223</item>-->
     </string-array>
     <string-array name="TaleType_1_array">
         <item>Журавель і лисиця</item>
@@ -19,12 +19,7 @@
         <item>Як солдат царя обдурив</item>
     </string-array>
     <string-array name="TaleType_2_array">
-        <item>Журавель і лисиця</item>
-        <item>Заяче сало</item>
-        <item>Язиката Хвеська</item>
-        <item>Як миша віддячила левові</item>
-        <item>Як мужик пана дурив</item>
-        <item>Як пан німецькою балакав</item>
-        <item>Як солдат царя обдурив</item>
+        <item>Як музика змудрував звірів</item>
+        <item>Як було у давнину</item>
     </string-array>
 </resources>

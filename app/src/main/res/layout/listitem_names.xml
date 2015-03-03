@@ -5,7 +5,6 @@
     android:layout_height="wrap_content"
     android:id="@+id/tale_list_item"
     android:gravity="center_vertical"
-    android:background="@drawable/btn_list_bg"
     android:layout_marginLeft="10dp"
     android:padding="11dp"
     style="@style/btnListItem"  >

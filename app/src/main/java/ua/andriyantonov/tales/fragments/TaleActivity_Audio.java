@@ -19,7 +19,7 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import ua.andriyantonov.tales.LoadTale;
+import ua.andriyantonov.tales.TalesSettings;
 import ua.andriyantonov.tales.R;
 import ua.andriyantonov.tales.TalePlay_Service;
 
@@ -57,10 +57,10 @@ public class TaleActivity_Audio extends Fragment implements SeekBar.OnSeekBarCha
         btn_Stop = (ImageButton)rootView.findViewById(R.id.btn_Stop);
         audioTaleSeekBar = (SeekBar)rootView.findViewById(R.id.audioTaleSeekBar);
 
-        LoadTale.getTaleName(getActivity());
-        LoadTale.getTaleText(getActivity());
-        taleName.setText(LoadTale.taleName);
-        taleText.setText(LoadTale.taleText);
+        TalesSettings.getTaleName(getActivity());
+        TalesSettings.getTaleText(getActivity());
+        taleName.setText(TalesSettings.taleName);
+        taleText.setText(TalesSettings.taleText);
 
         btn_PlayResume.setOnClickListener(this);
         btn_Stop.setOnClickListener(this);

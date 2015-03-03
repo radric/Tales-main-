@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.os.Handler;
@@ -18,7 +17,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.ImageButton;
 import android.widget.Toast;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -107,8 +105,8 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
 
         if (!mPlayer.isPlaying()){
             try {
-                LoadTale.loadTaleItemPosition(getApplicationContext());
-                mPlayer.setDataSource(LoadTale.data_HTTP);
+                TalesSettings.loadTaleItemPosition(getApplicationContext());
+                mPlayer.setDataSource(TalesSettings.data_HTTP);
                 /** send message to activity to progress uploading dialog*/
                 mPlayer.prepareAsync();
             }catch (IllegalArgumentException e){
@@ -314,7 +312,7 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
         notification.flags = Notification.FLAG_AUTO_CANCEL;
         Context context = getApplicationContext();
         CharSequence contentTitle = getResources().getString(R.string.contentTitle);
-        CharSequence contentText = LoadTale.taleName;
+        CharSequence contentText = TalesSettings.taleName;
         Intent notifIntent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
         notifIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         notifIntent.putExtra("showAudioFrag",true);
