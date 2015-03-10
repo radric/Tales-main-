@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="mainListItem">
-        <item>Аудіо Казки</item>
+        <item>Аудіоказки народні</item>
         <item>Казки про добро і зло</item>
         <item>Аудіо про тварин</item>
         <item>Аудіо про любов</item>

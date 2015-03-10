@@ -1,25 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">КАЗОЧКИ</string>
-    <string name="title_section1">Audio Tales</string>
-    <string name="title_section2">TalesType 2</string>
-    <string name="title_section3">TalesType 3</string>
-    <string name="title_section4">TalesType 4</string>
+    <string name="app_name">Казочки</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_example">Example action</string>
-    <string name="action_settings">Settings</string>
 
-    <string name="tickerText">Казка почалась</string>
-    <string name="contentTitle">Аудіо казка</string>
+    <string name="tickerText">Казка почалась :)</string>
+    <string name="contentTitle">Аудіоказка</string>
 
-    <string name="pdBuffer_inProgress">Аудіо завантажується</string>
+    <string name="pdBuffer_inProgress">Аудіоказка завантажується</string>
     <string name="pdBuffer_inBuffer">Це може зайняти кілька секунд ...</string>
 
     <string name="ad_afterCall_message">Програвач було зупинено</string>
     <string name="ad_afterCall_btnPos">Продовжити</string>
-    <string name="ad_afterCall_btnNeg">Пауза</string>
+    <string name="ad_afterCall_btnNeg">Зупинити</string>
+    
+    <string name="dl_error">Помилка завантаження...</string>
+    <string name="dl_success">Аудіоказка завантажена :)</string>
+    <string name="del_message">Ви впевнені, що хочете видалити аудіоказку?</string>
+    <string name="del_btnPos">Видалити</string>
+    <string name="del_btnNeg">Відмінити</string>
+    <string name="del_success">Аудіоказка видалена</string>
+
+    <string name="mainAudioTale_name">audioTale_</string>
+    <string name="title_activity_audio">AudioActivity</string>
+    <string name="title_activity_read">ReadActivity</string>
 
 
 </resources>

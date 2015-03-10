@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TalesTheme"
+        parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/talesActionBar</item>
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/talesActionBar</item>
+    </style>
+
+    <!-- ActionBar styles -->
+    <style name="talesActionBar"
+        parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@drawable/actionbar_bg</item>
+
+        <!-- Support library compatibility -->
+        <item name="background">@drawable/actionbar_bg</item>
+    </style>
+
+</resources>

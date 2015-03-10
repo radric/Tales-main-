@@ -1,16 +1,15 @@
 package ua.andriyantonov.tales;
 
-import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
@@ -18,17 +17,23 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import ua.andriyantonov.tales.fragments.TaleActivity_Audio;
 
 public class TalePlay_Service extends Service implements MediaPlayer.OnPreparedListener,
         MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnCompletionListener,
 MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
 
-    public MediaPlayer mPlayer = new MediaPlayer();
-    private int switchInt;
+    public static MediaPlayer mPlayer = new MediaPlayer();
+    private int switchPlayStatus;
+
+    private String dataSource;
+    private int talePosition;
+    private Context context;
+    private Intent aDialogIntent;
+    public static final String BROADCAST_ADIALOG = "ua.andriyantonov.tales.ADIALOG";
 
     private final static int NOTIFICATION_ID=1;
     private boolean isPausedInCall;
@@ -50,21 +55,23 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
     public void onCreate(){
         bufferIntent = new Intent(BROADCAST_BUFFER);
         seekIntent = new Intent(BROADCAST_ACTION);
-
+        aDialogIntent = new Intent(BROADCAST_ADIALOG);
         mPlayer.setOnCompletionListener(this);
         mPlayer.setOnPreparedListener(this);
         mPlayer.setOnErrorListener(this);
         mPlayer.setOnBufferingUpdateListener(this);
         mPlayer.setOnSeekCompleteListener(this);
         mPlayer.setOnInfoListener(this);
-        mPlayer.reset();
     }
 
     @Override
     public int onStartCommand(Intent intent,int flags,int startId){
+
         /**set up receiver for seekBar change and PlayResume btns*/
-        getApplication().registerReceiver(seekBarChangedBroadcastReceiver, new IntentFilter(TaleActivity_Audio.BROADCAST_SEEKBAR));
-        LocalBroadcastManager.getInstance(getApplication()).registerReceiver(switchPlayPauseBroadcastReceiver,new IntentFilter(TaleActivity_Audio.BROADCAST_switchStatus));
+        getApplication().registerReceiver(seekBarChangedBroadcastReceiver,
+                new IntentFilter(AudioActivity.BROADCAST_SEEKBAR));
+        LocalBroadcastManager.getInstance(getApplication()).registerReceiver(switchPlayPauseBroadcastReceiver,
+                new IntentFilter(AudioActivity.BROADCAST_switchPlayStatus));
 
         initNotification();
 
@@ -95,6 +102,7 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
                         if (isPausedInCall){
                         isPausedInCall=false;
                             pauseTaleAudio();
+                            sendAfterCallADialogBroadcast();
                             }
                         }
                         break;
@@ -103,10 +111,23 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
                 };
         telephonyManager.listen(phoneStateListener,PhoneStateListener.LISTEN_CALL_STATE);
 
+        /**check if the tale was already downloaded and mp3 file existed
+         * if it was - use mp3 from storage
+         * if not - upload from cloudService*/
+        UpdateTalesData.loadTalesData(getApplicationContext());
+        talePosition=UpdateTalesData.talePosition;
+        if (UpdateTalesData.checkTaleExist.exists()){
+            dataSource= Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+
+                    getResources().getString(R.string.app_name)+"/"+
+                    getResources().getString(R.string.mainAudioTale_name)+talePosition+".mp3";
+        } else {
+            dataSource=UpdateTalesData.data_HTTP;
+        }
+
+        /** set data source for player and get prepared*/
         if (!mPlayer.isPlaying()){
             try {
-                TalesSettings.loadTaleItemPosition(getApplicationContext());
-                mPlayer.setDataSource(TalesSettings.data_HTTP);
+                mPlayer.setDataSource(dataSource);
                 /** send message to activity to progress uploading dialog*/
                 mPlayer.prepareAsync();
             }catch (IllegalArgumentException e){
@@ -117,10 +138,15 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
                 e.printStackTrace();
             }
         }
-                sendBufferingBroadcast();
+
+        /** show buffering progress bar if playing online*/
+        if (!UpdateTalesData.checkTaleExist.exists()){
+            sendBufferingBroadcast();
+        }
+
                 /** set up seekbar handler*/
                 setupHandler();
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -130,7 +156,7 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
             if (mPlayer.isPlaying()){
                 mPlayer.stop();
             }
-            mPlayer.release();
+            mPlayer.reset();
         }
         stopSelf();
         if (phoneStateListener!=null){
@@ -184,7 +210,7 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
 
     private void setupHandler(){
         handler.removeCallbacks(sendUpdatesToUI);
-        handler.postDelayed(sendUpdatesToUI, 1000);
+        handler.postDelayed(sendUpdatesToUI, 0);
     }
     private Runnable sendUpdatesToUI = new Runnable() {
         @Override
@@ -193,25 +219,6 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
             handler.postDelayed(this,1000);
         }
     };
-
-    public void afterCallDialog(){
-        AlertDialog ad = new AlertDialog.Builder(getApplication()).create();
-        ad.setMessage(getResources().getString(R.string.ad_afterCall_message));
-        ad.setButton(getResources().getString(R.string.ad_afterCall_btnPos),new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                playTaleAudio();
-            }
-        });
-        ad.setButton(getResources().getString(R.string.ad_afterCall_btnNeg), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        ad.setCancelable(true);
-        ad.show();
-    }
 
     private void LogTaleAudioPosition(){
         if(mPlayer.isPlaying()){
@@ -222,11 +229,9 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
             seekIntent.putExtra("song_ended",String .valueOf(audioTaleEnded));
             String maxDurationText = convertFormat(taleAudioMaxDuration);
             seekIntent.putExtra("audioMaxText",maxDurationText);
-
             String currTimePosText = convertFormat(taleAudioPosition);
             seekIntent.putExtra("currTimePosText",currTimePosText);
-
-            sendBroadcast(seekIntent);
+           sendBroadcast(seekIntent);
         }
     }
 
@@ -244,10 +249,10 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
         }
     };
     public void switchPlayPause(Intent intent){
-        switchInt = intent.getIntExtra("switchStatus",-1);
-        if (switchInt==1){
+        switchPlayStatus = intent.getIntExtra("switchPlayStatus",-1);
+        if (switchPlayStatus==1){
             pauseTaleAudio();
-        } else if (switchInt==2){
+        } else if (switchPlayStatus==2){
             playTaleAudio();
         }
     }
@@ -280,11 +285,16 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
         sendBroadcast(bufferIntent);
     }
 
+    /** send message to activity that audio is prepared and ready to start playing*/
+    public void sendAfterCallADialogBroadcast(){
+        aDialogIntent.putExtra("aDialogIntent","1");
+        sendBroadcast(aDialogIntent);
+    }
+
     @Override
     public void onCompletion(MediaPlayer mp) {
-        stopSelf();
         audioTaleEnded=1;
-        seekIntent.putExtra("song_ended",String .valueOf(audioTaleEnded));
+        UpdateTalesData.saveTalesIntData(getApplicationContext(),"audioTaleEnded",audioTaleEnded);
         sendBroadcast(seekIntent);
     }
 
@@ -309,10 +319,9 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
         CharSequence tikerText = getResources().getString(R.string.tickerText);
         NotificationManager mNotificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         Notification notification = new Notification(R.drawable.ic_launcher,tikerText,System.currentTimeMillis());
-        notification.flags = Notification.FLAG_AUTO_CANCEL;
         Context context = getApplicationContext();
         CharSequence contentTitle = getResources().getString(R.string.contentTitle);
-        CharSequence contentText = TalesSettings.taleName;
+        CharSequence contentText = UpdateTalesData.taleName;
         Intent notifIntent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
         notifIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         notifIntent.putExtra("showAudioFrag",true);
