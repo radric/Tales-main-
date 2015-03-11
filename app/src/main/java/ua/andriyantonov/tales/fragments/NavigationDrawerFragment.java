@@ -80,9 +80,9 @@ public class NavigationDrawerFragment extends Fragment {
             mFromSavedInstanceState = true;
         }
 
+        mDrawerLayout=null;
         // Select either the default item (0) or the last selected item.
         selectItem(mCurrentSelectedPosition);
-
 
     }
 

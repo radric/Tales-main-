@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -419,6 +420,15 @@ public class AudioActivity extends ActionBarActivity implements View.OnClickList
             btn_taleDownload.setImageResource(R.drawable.btn_download_n);
         }
         super.onResume();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

@@ -15,6 +15,7 @@ import ua.andriyantonov.tales.ReadActivity;
 import ua.andriyantonov.tales.UpdateTalesData;
 
 public class TaleListItem_read extends Fragment implements AdapterView.OnItemClickListener {
+    private Intent serviceIntent;
 
     public View onCreateView(LayoutInflater inflater,ViewGroup container, Bundle saveInstanceBundle){
         final View rootView = inflater.inflate(R.layout.frg_tale_listitem_read,container,false);
@@ -38,6 +39,16 @@ public class TaleListItem_read extends Fragment implements AdapterView.OnItemCli
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent(getActivity(), ReadActivity.class);
         UpdateTalesData.saveTalesIntData(getActivity(), "talePosition", position);
+        stopTalePlay_Service();
         startActivity(intent);
+    }
+
+    private void stopTalePlay_Service(){
+        try {
+            getActivity().stopService(serviceIntent);
+            UpdateTalesData.saveTalesIntData(getActivity(),"isPlaying",UpdateTalesData.isPlaying=0);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

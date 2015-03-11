@@ -71,7 +71,6 @@ public class MainActivity extends ActionBarActivity
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container,fragment)
-                    .addToBackStack("111")
                     .setCustomAnimations(R.animator.show_fr,R.animator.remove_fr)
                     .commit();
         }
@@ -164,8 +163,7 @@ public class MainActivity extends ActionBarActivity
         if (NavigationDrawerFragment.mDrawerLayout.isDrawerOpen(Gravity.LEFT)){
             NavigationDrawerFragment.mDrawerLayout.closeDrawer(Gravity.LEFT);
         } else {
-            moveTaskToBack(true);
-            finish();
+            super.onBackPressed();
         }
     }
 

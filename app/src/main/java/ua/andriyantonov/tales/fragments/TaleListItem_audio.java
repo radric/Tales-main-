@@ -49,7 +49,6 @@ public class TaleListItem_audio extends Fragment implements AdapterView.OnItemCl
 
         } else {
             stopTalePlay_Service();
-            UpdateTalesData.saveTalesIntData(getActivity(),"isPlaying",UpdateTalesData.isPlaying=0);
         }
         Intent intent = new Intent(getActivity(), AudioActivity.class);
         UpdateTalesData.saveTalesIntData(getActivity(), "talePosition", position);
@@ -59,6 +58,7 @@ public class TaleListItem_audio extends Fragment implements AdapterView.OnItemCl
     private void stopTalePlay_Service(){
         try {
             getActivity().stopService(serviceIntent);
+            UpdateTalesData.saveTalesIntData(getActivity(),"isPlaying",UpdateTalesData.isPlaying=0);
         } catch (Exception e){
             e.printStackTrace();
         }

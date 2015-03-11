@@ -322,7 +322,7 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
         Context context = getApplicationContext();
         CharSequence contentTitle = getResources().getString(R.string.contentTitle);
         CharSequence contentText = UpdateTalesData.taleName;
-        Intent notifIntent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
+        Intent notifIntent = new Intent(this, AudioActivity.class);
         notifIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         notifIntent.putExtra("showAudioFrag",true);
         PendingIntent contentIntent = PendingIntent.getActivity(context,0,notifIntent,PendingIntent.FLAG_UPDATE_CURRENT);
