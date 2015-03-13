@@ -31,7 +31,6 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
 
     private String dataSource;
     private int talePosition;
-    private Context context;
     private Intent aDialogIntent;
     public static final String BROADCAST_ADIALOG = "ua.andriyantonov.tales.ADIALOG";
 
@@ -65,7 +64,7 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
     }
 
     @Override
-    public int onStartCommand(Intent intent,int flags,int startId){
+    public int onStartCommand(final Intent intent,int flags,int startId){
 
         /**set up receiver for seekBar change and PlayResume btns*/
         getApplication().registerReceiver(seekBarChangedBroadcastReceiver,
@@ -287,7 +286,7 @@ MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener{
 
     /** send message to activity that audio is prepared and ready to start playing*/
     public void sendAfterCallADialogBroadcast(){
-        aDialogIntent.putExtra("aDialogIntent","1");
+        aDialogIntent.putExtra("aDialogIntent",0);
         sendBroadcast(aDialogIntent);
     }
 

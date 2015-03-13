@@ -5,6 +5,7 @@ import ua.andriyantonov.tales.fragments.TaleListItem_audio;
 import ua.andriyantonov.tales.fragments.TaleListItem_read;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -59,7 +60,7 @@ public class MainActivity extends ActionBarActivity
     }
 
     public void onSectionAttached(int number) {
-        Fragment fragment = null;
+        Fragment fragment;
         if (number==1){
             fragment=new TaleListItem_audio();
         } else {
@@ -72,6 +73,7 @@ public class MainActivity extends ActionBarActivity
             fragmentManager.beginTransaction()
                     .replace(R.id.container,fragment)
                     .setCustomAnimations(R.animator.show_fr,R.animator.remove_fr)
+                    .addToBackStack(null)
                     .commit();
         }
     }
@@ -109,11 +111,12 @@ public class MainActivity extends ActionBarActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
+        switch (id){
+            case R.id.action_settings:
+                Intent intent = new Intent(this,SettingsActivity.class);
+                startActivity(intent);
+                break;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -162,9 +165,11 @@ public class MainActivity extends ActionBarActivity
     public void onBackPressed(){
         if (NavigationDrawerFragment.mDrawerLayout.isDrawerOpen(Gravity.LEFT)){
             NavigationDrawerFragment.mDrawerLayout.closeDrawer(Gravity.LEFT);
-        } else {
-            super.onBackPressed();
+        } else if (getFragmentManager().getBackStackEntryCount() <= 2) {
+            finish();
+            return;
         }
+            super.onBackPressed();
     }
 
 }

@@ -7,10 +7,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.TypedValue;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -32,6 +36,7 @@ public class AudioActivity extends ActionBarActivity implements View.OnClickList
     public int isPlaying;
     private boolean mADialogBroadcastIsRegistered;
     private CharSequence abTitle;
+    private SharedPreferences shp;
 
 
     //--SeekBar variables
@@ -119,7 +124,6 @@ public class AudioActivity extends ActionBarActivity implements View.OnClickList
     }
 
     private void startTalePlay_Service(){
-        registerBroadcastReceivers();
         /**check if the tale was already downloaded and mp3 file existed
          * if it was - use mp3 from storage
          * if not - upload from cloudService*/
@@ -131,6 +135,7 @@ public class AudioActivity extends ActionBarActivity implements View.OnClickList
             checkConnectivity();
             if (isOnline){
                 doIfOnline();
+                autoDownloadTales();
             }else {
                 doIfOffline();
             }
@@ -155,6 +160,16 @@ public class AudioActivity extends ActionBarActivity implements View.OnClickList
         currTimePos.setText("00:00");
         this.stopService(serviceIntent);
         unregisterBroadcastReceivers();
+
+        /** register broadcastReceiver for alertDialog */
+        if (mADialogBroadcastIsRegistered){
+            try {
+                this.unregisterReceiver(aDialogBroadcastReceiver);
+                mADialogBroadcastIsRegistered=false;
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
     }
 
     private void checkConnectivity(){
@@ -242,32 +257,32 @@ public class AudioActivity extends ActionBarActivity implements View.OnClickList
 
     private BroadcastReceiver aDialogBroadcastReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
-            aDialog(intent);
+        public void onReceive(Context context, Intent aDialogIntent) {
+            aDialog();
         }
     };
 
-    public void aDialog(Intent intent){
-        isPlaying=2;
-        btn_PlayResume.setImageResource(R.drawable.select_btn_play);
-        AlertDialog ad = new AlertDialog.Builder(this).create();
-        ad.setMessage(getResources().getString(R.string.ad_afterCall_message));
-        ad.setButton(getResources().getString(R.string.ad_afterCall_btnPos),new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switchPlayPause();
-            }
-        });
-        ad.setButton2(getResources().getString(R.string.ad_afterCall_btnNeg), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-                stopTalePlay_Service();
-                isPlaying=0;
-            }
-        });
-        ad.setCancelable(true);
-        ad.show();
+    private void aDialog(){
+                isPlaying=2;
+                btn_PlayResume.setImageResource(R.drawable.select_btn_play);
+                AlertDialog ad = new AlertDialog.Builder(this).create();
+                ad.setMessage(getResources().getString(R.string.ad_afterCall_message));
+                ad.setButton(getResources().getString(R.string.ad_afterCall_btnPos),new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switchPlayPause();
+                    }
+                });
+                ad.setButton2(getResources().getString(R.string.ad_afterCall_btnNeg), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        stopTalePlay_Service();
+                        isPlaying=0;
+                    }
+                });
+                ad.setCancelable(false);
+                ad.show();
     }
 
     public void deleteDialog(){
@@ -294,7 +309,7 @@ public class AudioActivity extends ActionBarActivity implements View.OnClickList
         dlProgDialog.setMessage(getResources().getString(R.string.pdBuffer_inProgress));
         dlProgDialog.setIndeterminate(true);
         dlProgDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        dlProgDialog.setCancelable(false);
+        dlProgDialog.setCancelable(true);
     }
 
     private void startDowload(){
@@ -354,15 +369,9 @@ public class AudioActivity extends ActionBarActivity implements View.OnClickList
             }
         }
 
-        /** register broadcastReceiver for alertDialog */
-        if (mADialogBroadcastIsRegistered){
-            try {
-                this.unregisterReceiver(aDialogBroadcastReceiver);
-                mADialogBroadcastIsRegistered=false;
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
+        /** register broadcastReceiver for alertDialog
+         * in StopService in case of call while playing */
+
     }
 
     @Override
@@ -388,7 +397,7 @@ public class AudioActivity extends ActionBarActivity implements View.OnClickList
         btn_taleDownload.setImageResource(R.drawable.btn_download_n);
     }
 
-    public void checkPlayBtnPosition(){
+    public void checkBtnPosition(){
         UpdateTalesData.loadTalesData(this);
         isPlaying=UpdateTalesData.isPlaying;
         if (isPlaying==1) {
@@ -396,23 +405,7 @@ public class AudioActivity extends ActionBarActivity implements View.OnClickList
         } else if (isPlaying==2|isPlaying==0){
             btn_PlayResume.setImageResource(R.drawable.select_btn_play);
         }
-    }
 
-    @Override
-    public void onPause(){
-        super.onPause();
-        if (isPlaying==2){
-            stopTalePlay_Service();
-            isPlaying=0;
-        }
-        UpdateTalesData.saveTalesIntData(this,"isPlaying",isPlaying);
-        unregisterBroadcastReceivers();
-
-    }
-    @Override
-    public void onResume(){
-        registerBroadcastReceivers();
-        checkPlayBtnPosition();
         /**check every start (in case if user deleted audioTale in fileManger*/
         if (UpdateTalesData.checkTaleExist.exists()){
             btn_taleDownload.setImageResource(R.drawable.btn_download_p);
@@ -421,14 +414,64 @@ public class AudioActivity extends ActionBarActivity implements View.OnClickList
         }
         super.onResume();
     }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        if (isPlaying==2){
+            stopTalePlay_Service();
+            isPlaying=0;
+            UpdateTalesData.saveTalesIntData(this,"isPlaying",isPlaying);
+        }
+        unregisterBroadcastReceivers();
+
+    }
+    @Override
+    public void onResume(){
+        registerBroadcastReceivers();
+        checkBtnPosition();
+        updateTextSize();
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+            getMenuInflater().inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == android.R.id.home) {
-            finish();
-            return true;
+        switch (id){
+            case R.id.action_settings:
+                Intent intent = new Intent(this,SettingsActivity.class);
+                startActivity(intent);
+                break;
+            case android.R.id.home:
+                super.onBackPressed();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public void updateTextSize(){
+        shp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String textSize = shp.getString(
+                getString(R.string.pref_textSize_key),
+                getString(R.string.pref_textSize_default)
+        );
+        float size = Float.parseFloat(textSize);
+        taleText.setTextSize(TypedValue.COMPLEX_UNIT_SP,size);
+    }
+
+    public void autoDownloadTales(){
+        shp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean adlStatus = shp.getBoolean(getString(R.string.pref_download_key),false);
+        if (adlStatus){
+                startDowload();
+        }
+    }
+
 
 }

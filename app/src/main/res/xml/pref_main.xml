@@ -1,0 +1,14 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="@string/pref_textSize_key"
+        android:title="@string/pref_textSize_label"
+        android:defaultValue="@string/pref_textSize_default"
+        android:entries="@array/pref_textSize_entries"
+        android:entryValues="@array/pref_textSize_values" />
+
+    <CheckBoxPreference
+        android:key="@string/pref_download_key"
+        android:title="@string/pref_download_label"
+        android:summary="@string/pref_download_Summary"
+        android:defaultValue="false" />
+</PreferenceScreen>

@@ -11,9 +11,11 @@
     <style name="talesActionBar"
         parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@drawable/actionbar_bg</item>
+        <item name="android:homeAsUpIndicator">@mipmap/btn_back</item>
 
         <!-- Support library compatibility -->
         <item name="background">@drawable/actionbar_bg</item>
+        <item name="homeAsUpIndicator">@mipmap/btn_back</item>
     </style>
 
 </resources>

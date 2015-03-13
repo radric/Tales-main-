@@ -2,6 +2,10 @@
 <resources>
 
     <string name="app_name">Казочки</string>
+    <string name="action_menu">Меню</string>
+    <string name="action_download">Завантажити аудіоказки</string>
+    <string name="action_settings">Налаштування</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -17,7 +21,7 @@
     
     <string name="dl_error">Помилка завантаження...</string>
     <string name="dl_success">Аудіоказка завантажена :)</string>
-    <string name="del_message">Ви впевнені, що хочете видалити аудіоказку?</string>
+    <string name="del_message">Ви впевнені, що хочете видалити завантажену аудіоказку з пристрою?</string>
     <string name="del_btnPos">Видалити</string>
     <string name="del_btnNeg">Відмінити</string>
     <string name="del_success">Аудіоказка видалена</string>

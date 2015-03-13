@@ -18,8 +18,8 @@ public class UpdateTalesData extends Activity{
     public static String data_HTTP, taleName, taleText;
     public static int talePosition,mListItemPosition,isPlaying,audioTaleEnded;
     public static String[] fileList;
-    public static Context context;
     public static File checkTaleExist;
+
 
     private static InputStream is;
     private static AssetManager assetM;
@@ -77,9 +77,7 @@ public class UpdateTalesData extends Activity{
         assetM = context.getAssets();
         try {
             fileList = assetM.list("TaleType_"+mListItemPosition+"/names");
-            if (fileList==null){
-                // if dir empty
-            } else {
+            if (fileList!=null){
                 for (int i=0; i<fileList.length; i++){
                     try {
                         BufferedReader br = new BufferedReader(new InputStreamReader(context.getAssets()
@@ -105,17 +103,7 @@ public class UpdateTalesData extends Activity{
         editor.putInt(key, value);
         editor.apply();
     }
-    public static void saveTalesStringData(Context context,String key,String value){
-        shp = context.getSharedPreferences("MySHP",Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = shp.edit();
-        editor.putString(key, value);
-        editor.apply();
-    }
-    public static void saveTalesBooleanData(Context context,String key,boolean value){
-        shp = context.getSharedPreferences("MySHP", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = shp.edit();
-        editor.putBoolean(key,value);
-        editor.apply();
-    }
+
+
 
 }

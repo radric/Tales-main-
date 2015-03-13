@@ -1,0 +1,35 @@
+<resources>
+    <string name="title_activity_settings">Налаштування</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">Налаштування</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_text">Налаштування</string>
+
+    <string name="pref_textSize_key">pref_textSize_key</string>
+    <string name="pref_textSize_label">Розмір шрифту казок</string>
+    <string name="pref_textSize_default">18</string>
+    <string-array name="pref_textSize_entries">
+        <item>Малий</item>
+        <item>Середній</item>
+        <item>Великий</item>
+        <item>Величезний</item>
+    </string-array>
+    <string-array name="pref_textSize_values">
+        <item>15</item>
+        <item>18</item>
+        <item>25</item>
+        <item>33</item>
+    </string-array>
+
+    <string name="pref_download_key">pref_rotation_key</string>
+    <string name="pref_download_label">Автоматичне збереження</string>
+    <string name="pref_download_Summary">Дозволити автоматично зберігати
+        аудіоказки на пристрій під час програвання</string>
+
+
+
+</resources>

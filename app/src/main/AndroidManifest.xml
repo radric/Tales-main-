@@ -35,17 +35,21 @@
         <activity
             android:name=".AudioActivity"
             android:label="@string/title_activity_audio"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ua.andriyantonov.tales.MainActivity" />
         </activity>
         <activity
             android:name=".ReadActivity"
-            android:label="@string/title_activity_read" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="ua.andriyantonov.tales.MainActivity" />
+            android:label="@string/title_activity_read"
+            android:screenOrientation="portrait" >
+
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings" >
         </activity>
     </application>
 

@@ -2,6 +2,7 @@ package ua.andriyantonov.tales.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import java.io.File;
 
 import ua.andriyantonov.tales.AudioActivity;
 import ua.andriyantonov.tales.UpdateTalesData;
@@ -18,7 +21,8 @@ import ua.andriyantonov.tales.TalePlay_Service;
 public class TaleListItem_audio extends Fragment implements AdapterView.OnItemClickListener {
     private Intent serviceIntent;
     private int playingTalePosition;
-    public static String backStackName = "nowPlaying";
+    public String [] taleArray;
+    public File [] fileTaleArray;
 
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle saveInstanceBundle){
         final View rootView = inflater.inflate(R.layout.frg_tale_listitem_audio,container,false);
@@ -44,10 +48,7 @@ public class TaleListItem_audio extends Fragment implements AdapterView.OnItemCl
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         UpdateTalesData.loadTalesData(getActivity());
         playingTalePosition=UpdateTalesData.talePosition;
-
-        if (position==playingTalePosition){
-
-        } else {
+        if (position!=playingTalePosition){
             stopTalePlay_Service();
         }
         Intent intent = new Intent(getActivity(), AudioActivity.class);
@@ -63,4 +64,5 @@ public class TaleListItem_audio extends Fragment implements AdapterView.OnItemCl
             e.printStackTrace();
         }
     }
+
 }
