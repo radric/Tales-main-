@@ -129,6 +129,7 @@ public class AudioActivity extends ActionBarActivity implements View.OnClickList
          * if not - upload from cloudService*/
         UpdateTalesData.loadTalesData(this);
         if (UpdateTalesData.checkTaleExist.exists()){
+
             doIfOnline();
             //cos code the same
         } else {
@@ -182,6 +183,7 @@ public class AudioActivity extends ActionBarActivity implements View.OnClickList
             isOnline=false;}
     }
     private void doIfOnline(){
+        registerBroadcastReceivers();
         btn_PlayResume.setImageResource(R.drawable.select_btn_pause);
         this.startService(serviceIntent);
     }
@@ -225,7 +227,8 @@ public class AudioActivity extends ActionBarActivity implements View.OnClickList
         if (audioTaleEnded==1){
             stopTalePlay_Service();
             isPlaying=0;
-            UpdateTalesData.saveTalesIntData(getApplicationContext(),"isPlaying",isPlaying);
+            UpdateTalesData.saveTalesIntData(getApplicationContext(),
+                    UpdateTalesData.isPlaying_key,isPlaying);
             audioTaleEnded=0;
             UpdateTalesData.saveTalesIntData(getApplicationContext(),"audioTaleEnded",audioTaleEnded);
         }
@@ -421,8 +424,8 @@ public class AudioActivity extends ActionBarActivity implements View.OnClickList
         if (isPlaying==2){
             stopTalePlay_Service();
             isPlaying=0;
-            UpdateTalesData.saveTalesIntData(this,"isPlaying",isPlaying);
-        }
+        }else{isPlaying=1;}
+        UpdateTalesData.saveTalesIntData(this,UpdateTalesData.isPlaying_key,isPlaying);
         unregisterBroadcastReceivers();
 
     }

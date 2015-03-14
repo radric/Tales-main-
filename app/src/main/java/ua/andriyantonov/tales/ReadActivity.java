@@ -1,8 +1,11 @@
 package ua.andriyantonov.tales;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -29,6 +32,12 @@ public class ReadActivity extends ActionBarActivity {
     }
 
     @Override
+    public void onResume(){
+        updateTextSize();
+        super.onResume();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
             getMenuInflater().inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
@@ -47,5 +56,16 @@ public class ReadActivity extends ActionBarActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void updateTextSize(){
+        SharedPreferences shp;
+        shp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String textSize = shp.getString(
+                getString(R.string.pref_textSize_key),
+                getString(R.string.pref_textSize_default)
+        );
+        float size = Float.parseFloat(textSize);
+        taleText.setTextSize(TypedValue.COMPLEX_UNIT_SP,size);
     }
 }

@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 public class UpdateTalesData extends Activity{
 
     public static String data_HTTP, taleName, taleText;
+    public final static String isPlaying_key="isPlaying";
     public static int talePosition,mListItemPosition,isPlaying,audioTaleEnded;
     public static String[] fileList;
     public static File checkTaleExist;
@@ -41,8 +42,6 @@ public class UpdateTalesData extends Activity{
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
     public static void getTaleName(Context context){
         loadTalesData(context);
@@ -69,7 +68,7 @@ public class UpdateTalesData extends Activity{
         context.getResources().getString(R.string.app_name)+"/"+
                 context.getResources().getString(R.string.mainAudioTale_name)+talePosition+".mp3");
 
-        isPlaying=shp.getInt("isPlaying",0);
+        isPlaying=shp.getInt(isPlaying_key,-1);
         audioTaleEnded = shp.getInt("audioTaleEnded",0);
     }
     public static void loadStringListView(Context context){
