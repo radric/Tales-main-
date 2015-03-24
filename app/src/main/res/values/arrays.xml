@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="mainListItem">
-        <item>Аудіоказки народні</item>
-        <item>Казки про добро і зло</item>
-        <item>Аудіо про тварин</item>
-        <item>Аудіо про любов</item>
-        <item>Аудіо про щастя</item>
-        <item>Аудіо про ще щось</item>
-        <item>Аудіо про ще щось 223</item>
+        <item>Аудіоказки</item>
+        <item>Про добро і зло</item>
+        <item>Про пори року</item>
+        <item>Про тварин</item>
     </string-array>
 </resources>

@@ -1,12 +1,5 @@
 <resources>
     <string name="title_activity_settings">Налаштування</string>
-
-    <!-- Strings related to Settings -->
-
-    <!-- Example General settings -->
-    <string name="pref_header_general">Налаштування</string>
-
-    <!-- Example settings for Notifications -->
     <string name="pref_header_text">Налаштування</string>
 
     <string name="pref_textSize_key">pref_textSize_key</string>
@@ -27,7 +20,7 @@
 
     <string name="pref_download_key">pref_rotation_key</string>
     <string name="pref_download_label">Автоматичне збереження</string>
-    <string name="pref_download_Summary">Дозволити автоматично зберігати
+    <string name="pref_download_Summary">Дозволити завантажувати ще не збережені
         аудіоказки на пристрій під час програвання</string>
 
 

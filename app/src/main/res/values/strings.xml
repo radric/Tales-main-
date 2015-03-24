@@ -1,34 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Казочки</string>
-    <string name="action_menu">Меню</string>
-    <string name="action_download">Завантажити аудіоказки</string>
+    <string name="app_name">Казки Дитинства</string>
     <string name="action_settings">Налаштування</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="in_dev_process">на стадії розробки …</string>
 
     <string name="tickerText">Казка почалась :)</string>
     <string name="contentTitle">Аудіоказка</string>
 
     <string name="pdBuffer_inProgress">Аудіоказка завантажується</string>
-    <string name="pdBuffer_inBuffer">Це може зайняти кілька секунд ...</string>
+    <string name="pdBuffer_inBuffer">Це може зайняти кілька секунд …</string>
 
     <string name="ad_afterCall_message">Програвач було зупинено</string>
     <string name="ad_afterCall_btnPos">Продовжити</string>
     <string name="ad_afterCall_btnNeg">Зупинити</string>
     
-    <string name="dl_error">Помилка завантаження...</string>
-    <string name="dl_success">Аудіоказка завантажена :)</string>
-    <string name="del_message">Ви впевнені, що хочете видалити завантажену аудіоказку з пристрою?</string>
+
+    <string name="del_message">Видалити завантажену аудіоказку з пристрою?</string>
     <string name="del_btnPos">Видалити</string>
     <string name="del_btnNeg">Відмінити</string>
     <string name="del_success">Аудіоказка видалена</string>
 
+    <string name="download_message">Завантажити на пристрій аудіоказку</string>
+    <string name="download_btnPos">Так</string>
+    <string name="download_btnNeg">Ні</string>
+    <string name="download_success">Аудіоказка завантажена :)</string>
+    <string name="download_error">Помилка завантаження…</string>
+
+    <string name="all_dl_message">Завантажити всі аудіоказки?</string>
+    <string name="all_dl_btnPos">Так</string>
+    <string name="all_dl_btnNeg">Ні</string>
+    <string name="all_dl_success">Всі аудіоказки завантажені :)</string>
+
+    <string name="ddd_message">Завантажити чи видалити всі аудіоказки з пристрою?</string>
+    <string name="ddd_download">Завантажити</string>
+    <string name="ddd_delete">Видалити</string>
+    <string name="ddd_del_success">Всі аудіоказки видалені</string>
+
+    <string name="all_pdBuffer_message">Кількість казок, що завантажуються: </string>
+    <string name="all_pdBuffer_inBuffer">Це може зайняти до кількох хвилин …</string>
+    <string name="pdBuffer_cancel">Відмінити</string>
+    <string name="pdBuffer_hide">Згорнути</string>
+
     <string name="mainAudioTale_name">audioTale_</string>
     <string name="title_activity_audio">AudioActivity</string>
     <string name="title_activity_read">ReadActivity</string>
+
+    <string name="description">description</string>
+    <string name="time">00:00</string>
+    <string name="categories">Розділи:</string>
 
 
 </resources>

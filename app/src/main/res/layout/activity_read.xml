@@ -1,38 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg_paper">
-
-    ///text
-    <LinearLayout
+    android:layout_height="match_parent">
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/ll_text"
-        android:layout_above="@+id/rl_audioPlayer">
-        <ScrollView
+        android:layout_marginBottom="-10dp"
+        android:layout_above="@+id/mp_shadow">
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/taleName"
-            android:layout_marginBottom="-10dp">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/taleText"
-                    android:text="taleText"
-                    android:layout_marginTop="5dp"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    style="@style/taleTextStyle"/>
-            </LinearLayout>
-
-        </ScrollView>
-    </LinearLayout>
-
-
+            android:id="@+id/taleText"
+            android:layout_marginTop="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            style="@style/taleTextStyle"/>
+    </ScrollView>
+    <ImageView
+        android:id="@+id/mp_shadow"
+        android:contentDescription="@string/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/mp_shadow"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="-3dp"
+        android:alpha="0.8"/>
 </RelativeLayout>

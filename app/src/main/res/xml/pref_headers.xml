@@ -3,12 +3,12 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="ua.andriyantonov.tales.SettingsActivity$GeneralPreferenceFragment"
+        android:fragment="ua.andriyantonov.tales.activities.SettingsActivity$GeneralPreferenceFragment"
         android:title="@string/pref_header_text"
         />
 
     <header
-        android:fragment="ua.andriyantonov.tales.SettingsActivity$MainPreferenceFragment"
+        android:fragment="ua.andriyantonov.tales.activities.SettingsActivity$MainPreferenceFragment"
         android:title="@string/pref_header_text" />
 
 </preference-headers>

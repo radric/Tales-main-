@@ -1,20 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="actionBar_bg_colorStart">#d63f2405</color>
-    <color name="actionBar_bg_colorEnd">#d6301905</color>
-
     <color name="nd_bg_color">#d63f2405</color>
-
-    <color name="basic_bg_colorStart">#d8693910</color>
-    <color name="basic_bg_colorEnd">#d8502002</color>
-
-    <color name="btn_bg_startColor">#ffcdcdcd</color>
-    <color name="btn_bg_centerColor">#ffd2d2d2</color>
-    <color name="btn_bg_endColor">#ffc4c4c4</color>
-
-    <color name="player_bg_colorStart">#9d2b1100</color>
-    <color name="player_bg_colorEnd">#ff262626</color>
 
     <color name="btnNameTextColor">#FF262626</color>
 

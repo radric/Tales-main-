@@ -5,6 +5,7 @@
         <item name="android:actionBarStyle">@style/talesActionBar</item>
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/talesActionBar</item>
+        <item name="android:windowBackground">@drawable/bg_paper</item>
     </style>
 
     <!-- ActionBar styles -->
